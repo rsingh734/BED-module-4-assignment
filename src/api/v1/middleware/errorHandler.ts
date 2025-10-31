@@ -11,8 +11,8 @@ const errorHandler = (
 ): void => {
     if (!err) {
         console.error("Error: null or undefined error received");
-        res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(
-            errorResponse("An unexpected error occurred", "UNKNOWN_ERROR")
+        res.status(HTTP_STATUS_CODES.NOT_FOUND).json(
+            errorResponse("An unexpected error occurred", "NOT_FOUND", HTTP_STATUS_CODES.NOT_FOUND)
         );
         return;
     }

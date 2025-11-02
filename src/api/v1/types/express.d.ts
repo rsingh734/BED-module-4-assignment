@@ -6,7 +6,11 @@ declare global {
       user?: {
         uid: string;
         email?: string;
-        // Add other user properties as needed
+        emailVerified: boolean;
+        role: string;
+        authTime: number;
+        issuedAt: number;
+        expiresAt: number;
       };
     }
   }

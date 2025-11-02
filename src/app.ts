@@ -6,6 +6,8 @@ import {
 } from "../src/api/v1/middleware/logger";
 import errorHandler from "../src/api/v1/middleware/errorHandler";
 import loanRoutes from "./api/v1/routes/loanRoutes";
+import userRoutes from "../src/api/v1/routes/userRotes";
+import adminRoutes from "./api/v1/routes/adminRoutes";
 
 const app = express();
 
@@ -24,6 +26,8 @@ app.use(express.json());
 
 // API Routes
 app.use("/api/v1", loanRoutes);
+app.use("/api/v1", userRoutes);
+app.use("/api/v1", adminRoutes);
 
 // Basic health check route
 app.get('/health', (req, res) => {

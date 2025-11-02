@@ -1,4 +1,4 @@
-import { AppError } from '../errors/AppErrors';
+import { AppError } from '../errors/error';
 
 /**
  * Extracts error message from unknown error types

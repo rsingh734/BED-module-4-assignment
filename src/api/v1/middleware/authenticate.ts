@@ -75,19 +75,58 @@ export const authenticateFirebaseToken = async (req: Request, res: Response, nex
 };
 
 /**
- * Optional: Role-based authorization middleware
+ * Authorization options interface for flexible role-based access control
+ */
+export interface AuthorizationOptions {
+  /** Array of allowed roles */
+  allowedRoles?: string[];
+  /** Whether to allow access if user owns the resource */
+  allowSameUser?: boolean;
+  /** Custom authorization function for complex logic */
+  customAuth?: (req: Request) => boolean;
+}
+
+/**
+ * Role-based authorization middleware with flexible options
  * Use after authenticateFirebaseToken to restrict access by roles
  */
-export const requireRole = (allowedRoles: string[]) => {
+export const requireRole = (options: AuthorizationOptions | string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
+    // Handle backward compatibility with string array
+    const authOptions: AuthorizationOptions = Array.isArray(options)
+      ? { allowedRoles: options }
+      : options;
+
+    // Check if user is authenticated
     if (!req.user) {
-      throw new UnauthorizedError('Authentication required.');
+      next(new UnauthorizedError('Authentication required.'));
+      return;
     }
 
-    if (!allowedRoles.includes(req.user.role)) {
-      throw new ForbiddenError('Insufficient permissions to access this resource.');
+    const { allowedRoles, allowSameUser, customAuth } = authOptions;
+
+    // Check custom authorization function first
+    if (customAuth && !customAuth(req)) {
+      next(new ForbiddenError('Access denied by custom authorization logic.'));
+      return;
     }
 
+    // Check role-based access
+    if (allowedRoles && !allowedRoles.includes(req.user.role)) {
+      // Check if same-user access is allowed
+      if (allowSameUser) {
+        const resourceUserId = req.params.uid || req.params.userId || req.params.id;
+        if (resourceUserId && resourceUserId === req.user.uid) {
+          next();
+          return;
+        }
+      }
+
+      next(new ForbiddenError('Insufficient permissions to access this resource.'));
+      return;
+    }
+
+    // All checks passed
     next();
   };
 };

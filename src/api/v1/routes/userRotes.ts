@@ -1,13 +1,15 @@
 import { Router } from 'express';
-import { 
-  getCurrentUser,
-  getUserById 
+import {
+  getCurrentUser
 } from '../controllers/userController';
+import { authenticateFirebaseToken } from '../middleware/authenticate';
 
 const router = Router();
 
 // User routes
-router.get('/user/me', getCurrentUser); // Get current user's own details
-router.get('/admin/users/:uid', getUserById); // Admin: get any user by UID
+router.get('/user/me',
+  authenticateFirebaseToken,
+  getCurrentUser
+); // Get current user's own details - any authenticated user
 
 export default router;

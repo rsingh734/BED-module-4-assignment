@@ -1,5 +1,27 @@
 import request from 'supertest';
+import { Request, Response, NextFunction } from 'express';
 import app from '../src/app';
+
+// Mock the authentication middleware
+jest.mock('../src/api/v1/middleware/authenticate', () => ({
+  authenticateFirebaseToken: jest.fn((req: Request, res: Response, next: NextFunction) => {
+    // Mock user based on test context or default to user role
+    req.user = {
+      uid: 'test-user-123',
+      email: 'test@loanapp.com',
+      emailVerified: true,
+      role: 'user',
+      authTime: Date.now(),
+      issuedAt: Date.now(),
+      expiresAt: Date.now() + 3600000
+    };
+    next();
+  }),
+  requireRole: jest.fn((roles: string[]) => (req: Request, res: Response, next: NextFunction) => {
+    // For tests, allow all role checks to pass
+    next();
+  })
+}));
 
 describe('Loan Application API Endpoints', () => {
   describe('POST /api/v1/loans', () => {

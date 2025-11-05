@@ -20,6 +20,5 @@
         }
     },
     "include": ["src/**/*", "test/**/*", "config/**/*"],
-    "types": ["node", "express"],
     "exclude": ["node_modules", "dist"]
 }

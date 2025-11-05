@@ -6,42 +6,44 @@ import {
   approveLoanApplication
 } from '../controllers/loanController';
 import { asyncErrorHandler } from '../middleware/errorHandler';
-import { NotFoundError } from '../errors/error';
-import { authenticateFirebaseToken, requireRole } from '../middleware/authenticate';
-
+import {
+  authenticateFirebaseToken,
+  requireRole
+} from '../middleware/authenticate';
 
 const router = Router();
 
-// Define routes and connect to controllers with authentication and authorization
+// Apply authentication to all loan routes
+router.use(authenticateFirebaseToken);
+
+// Define routes with role-based authorization
 router.post('/loans',
-  authenticateFirebaseToken,
+  requireRole(['user']), // Only users can create loan applications
   asyncErrorHandler(createLoanApplication)
-); // Any authenticated user can create loan
+);
 
 router.put('/loans/:id/review',
-  authenticateFirebaseToken,
-  requireRole(['officer', 'manager', 'admin']),
+  requireRole(['officer', 'manager']), // Officers and managers can review
   asyncErrorHandler(reviewLoanApplication)
-); // Officers, managers, admins can review
+);
 
 router.get('/loans',
-  authenticateFirebaseToken,
-  requireRole(['officer', 'manager', 'admin']),
+  requireRole(['officer', 'manager']), // Officers and managers can view all loans
   asyncErrorHandler(getAllLoans)
-); // Officers, managers, admins can view all loans
+);
 
 router.put('/loans/:id/approve',
-  authenticateFirebaseToken,
-  requireRole(['manager', 'admin']),
+  requireRole(['manager']), // Only managers can approve loans
   asyncErrorHandler(approveLoanApplication)
-); // Only managers and admins can approve
+);
 
-// Test error handling routes
+// Test error handling routes (keep these for now)
 router.get('/test/error', () => {
   throw new Error('This is a test error');
 });
 
 router.get('/test/app-error', () => {
+  const { NotFoundError } = require('../errors/AppErrors');
   throw new NotFoundError('Test loan not found');
 });
 

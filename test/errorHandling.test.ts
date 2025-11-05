@@ -69,7 +69,8 @@ describe('Error Handling Architecture', () => {
         error: {
           message: 'Test resource not found',
           code: 'NOT_FOUND',
-          statusCode: 404
+          statusCode: 404,
+          timestamp: expect.any(String)
         },
         timestamp: expect.any(String)
       });

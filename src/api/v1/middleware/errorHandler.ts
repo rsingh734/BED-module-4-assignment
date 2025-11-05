@@ -27,12 +27,14 @@ const errorHandler = (
 
     if (err instanceof AppError) {
         // Handle our custom application errors with their specific status codes
-        res.status(err.statusCode).json(errorResponse(err.message, err.code, err.statusCode));
+        const response = errorResponse(err.message, err.code, err.statusCode);
+        response.error.timestamp = new Date().toISOString();
+        res.status(err.statusCode).json(response);
     } else {
         // Handle unexpected errors (programming errors, third-party library errors, etc.)
-        res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(
-            errorResponse("An unexpected error occurred", "UNKNOWN_ERROR", HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)
-        );
+        const response = errorResponse("An unexpected error occurred", "UNKNOWN_ERROR", HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR);
+        response.error.timestamp = new Date().toISOString();
+        res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json(response);
     }
 };
 

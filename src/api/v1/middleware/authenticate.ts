@@ -1,3 +1,4 @@
+/// <reference path="../types/express.d.ts" />
 import { Request, Response, NextFunction } from 'express';
 import { auth } from '../../../config/firebaseConfig';
 import { UnauthorizedError, ForbiddenError } from '../errors/error';

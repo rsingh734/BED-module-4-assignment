@@ -3,9 +3,6 @@ import { auth } from '../../../config/firebaseConfig';
 import { asyncErrorHandler } from '../middleware/errorHandler';
 import { UnauthorizedError, NotFoundError } from '../errors/error';
 
-/**
- * Get current user details using Firebase Authentication
- */
 export const getCurrentUser = asyncErrorHandler(async (req: Request, res: Response) => {
   // This will be properly implemented after we add authentication middleware
   // For now, this is a placeholder that shows the intended Firebase Auth usage
@@ -36,9 +33,6 @@ export const getCurrentUser = asyncErrorHandler(async (req: Request, res: Respon
   }
 });
 
-/**
- * Get user details by UID using Firebase Authentication (Admin function)
- */
 export const getUserById = asyncErrorHandler(async (req: Request, res: Response) => {
   const { uid } = req.params;
 
